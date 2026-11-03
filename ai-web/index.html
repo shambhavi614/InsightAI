@@ -5,140 +5,665 @@
   <meta charset="UTF-8" />
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#101327" />
 
-  <title>InsightAI — Local AI Edition</title>
+  <title>InsightAI — Spatial Intelligence</title>
+
+  <link rel="preconnect"
+        href="https://fonts.googleapis.com" />
+  <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
 
   <link rel="stylesheet" href="./style.css" />
 </head>
 
 <body>
-  <main class="container">
 
-    <header>
-      <div class="logo">◈ InsightAI</div>
-      <span class="edition">LOCAL AI EDITION</span>
-    </header>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <div class="ambient ambient-three"></div>
+  <div class="noise"></div>
 
-    <section class="hero">
-      <div class="eyebrow">
-        ✦ PRIVATE • LOCAL • AI-POWERED
+  <div class="app-shell">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar glass" id="sidebar">
+
+      <div class="brand">
+        <div class="brand-icon">✦</div>
+
+        <div>
+          <strong>InsightAI</strong>
+          <small>SPATIAL INTELLIGENCE</small>
+        </div>
       </div>
 
-      <h1>Investigate your data with AI.</h1>
+      <div class="sidebar-label">WORKSPACE</div>
 
-      <p>
-        Upload a CSV, calculate verified insights,
-        and ask your own Ollama model to explain them.
-      </p>
+      <nav class="navigation" aria-label="Main navigation">
 
-      <div class="tags">
-        <span>Local Ollama</span>
-        <span>Browser Analytics</span>
-        <span>No API Key</span>
-      </div>
-    </section>
+        <button class="nav-item active"
+                data-view="dashboard">
+          <span class="nav-icon">◈</span>
+          <span>Overview</span>
+        </button>
 
-    <section class="card">
-      <h2>01 — Connect Ollama</h2>
+        <button class="nav-item"
+                data-view="dataset">
+          <span class="nav-icon">▤</span>
+          <span>Dataset Studio</span>
+        </button>
 
-      <p>
-        Ollama must be running on your computer
-        with the llama3.2:3b model installed.
-      </p>
+        <button class="nav-item"
+                data-view="investigation">
+          <span class="nav-icon">⌁</span>
+          <span>Investigation Lab</span>
+        </button>
 
-      <button id="connectBtn">
-        Check Ollama Connection
-      </button>
+        <button class="nav-item"
+                data-view="copilot">
+          <span class="nav-icon">✧</span>
+          <span>AI Copilot</span>
+        </button>
 
-      <div id="connectionStatus" class="status">
-        Not connected
-      </div>
-    </section>
+      </nav>
 
-    <section class="card">
-      <h2>02 — Upload Dataset</h2>
+      <div class="sidebar-bottom">
 
-      <input
-        id="csvFile"
-        type="file"
-        accept=".csv,text/csv"
-      />
+        <div class="local-card">
+          <div class="local-card-icon">✦</div>
+          <strong>Private intelligence</strong>
+          <p>
+            Your CSV stays in this browser.
+            AI requests go to your local Ollama.
+          </p>
+        </div>
 
-      <div id="datasetInfo" class="status">
-        No dataset selected
-      </div>
-    </section>
+        <div class="sidebar-footer">
+          <span class="footer-dot"></span>
+          Local-first workspace
+        </div>
 
-    <section class="card">
-      <h2>03 — Investigate Data</h2>
-
-      <div class="fields">
-        <label>
-          Date column
-          <select id="dateColumn"></select>
-        </label>
-
-        <label>
-          Metric column
-          <select id="metricColumn"></select>
-        </label>
-
-        <label>
-          Category column
-          <select id="categoryColumn"></select>
-        </label>
-
-        <label>
-          Period A start
-          <input id="aStart" type="date" />
-        </label>
-
-        <label>
-          Period A end
-          <input id="aEnd" type="date" />
-        </label>
-
-        <label>
-          Period B start
-          <input id="bStart" type="date" />
-        </label>
-
-        <label>
-          Period B end
-          <input id="bEnd" type="date" />
-        </label>
       </div>
 
-      <button id="investigateBtn">
-        Run Investigation
-      </button>
+    </aside>
 
-      <div id="results"></div>
-    </section>
+    <!-- MAIN CONTENT -->
 
-    <section class="card">
-      <h2>04 — AI Investigation Brief</h2>
+    <main class="main">
 
-      <p>
-        AI receives calculated investigation
-        evidence, not the entire CSV.
-      </p>
+      <header class="topbar glass">
 
-      <button id="generateBtn">
-        Generate AI Brief
-      </button>
+        <div class="topbar-left">
+          <button class="mobile-menu"
+                  id="menuBtn"
+                  aria-label="Toggle navigation">
+            ☰
+          </button>
 
-      <div id="aiOutput" class="ai-output">
-        Run an investigation first.
-      </div>
-    </section>
+          <div>
+            <span class="breadcrumb">
+              Workspace / <span id="currentView">Overview</span>
+            </span>
+            <h2 id="topbarTitle">Overview</h2>
+          </div>
+        </div>
 
-    <footer>
-      InsightAI • Local-first Data Intelligence
-    </footer>
+        <div class="topbar-right">
 
-  </main>
+          <div class="connection-pill" id="connectionPill">
+            <span class="connection-dot"></span>
+            <span id="connectionLabel">Not connected</span>
+          </div>
+
+          <button class="icon-button"
+                  id="refreshConnection"
+                  title="Check Ollama connection"
+                  aria-label="Check Ollama connection">
+            ↻
+          </button>
+
+          <div class="avatar">AI</div>
+
+        </div>
+
+      </header>
+
+      <!-- OVERVIEW -->
+
+      <section class="view active" id="dashboard">
+
+        <div class="hero glass">
+
+          <div class="hero-copy">
+
+            <div class="eyebrow">
+              <span class="sparkle">✦</span>
+              YOUR INTELLIGENCE SPACE
+            </div>
+
+            <h1>
+              Think beyond
+              <span>the data.</span>
+            </h1>
+
+            <p>
+              Turn raw datasets into meaningful discoveries.
+              Explore patterns, investigate changes, and
+              uncover insights with your private AI.
+            </p>
+
+            <div class="hero-actions">
+
+              <button class="primary-btn"
+                      data-go="dataset">
+                Explore Dataset <span>↗</span>
+              </button>
+
+              <button class="secondary-btn"
+                      data-go="copilot">
+                Open AI Copilot
+              </button>
+
+            </div>
+
+          </div>
+
+          <div class="hero-art" aria-hidden="true">
+            <div class="orbit orbit-outer"></div>
+            <div class="orbit orbit-middle"></div>
+            <div class="orbit orbit-inner"></div>
+
+            <div class="core-sphere">
+              <span>✦</span>
+            </div>
+
+            <div class="floating-chip chip-one">
+              ✧ AI Powered
+            </div>
+
+            <div class="floating-chip chip-two">
+              ◈ Private Data
+            </div>
+          </div>
+
+        </div>
+
+        <div class="section-heading">
+          <div>
+            <span class="section-kicker">AT A GLANCE</span>
+            <h2>Workspace overview</h2>
+          </div>
+          <span class="section-caption">
+            Your local intelligence environment
+          </span>
+        </div>
+
+        <div class="stats-grid">
+
+          <div class="stat-card glass">
+            <div class="stat-icon purple">▤</div>
+            <span>Dataset rows</span>
+            <strong id="statRows">0</strong>
+            <small>Loaded records</small>
+          </div>
+
+          <div class="stat-card glass">
+            <div class="stat-icon mint">◫</div>
+            <span>Data columns</span>
+            <strong id="statColumns">0</strong>
+            <small>Available dimensions</small>
+          </div>
+
+          <div class="stat-card glass">
+            <div class="stat-icon blue">⌁</div>
+            <span>Investigations</span>
+            <strong id="statInvestigations">0</strong>
+            <small>Completed this session</small>
+          </div>
+
+          <div class="stat-card glass">
+            <div class="stat-icon pink">✧</div>
+            <span>AI model</span>
+            <strong class="stat-model">Llama 3.2</strong>
+            <small id="modelStatus">Connection pending</small>
+          </div>
+
+        </div>
+
+        <div class="overview-grid">
+
+          <div class="panel glass">
+
+            <div class="panel-heading">
+              <div>
+                <span class="section-kicker">DATA PULSE</span>
+                <h3>Investigation preview</h3>
+              </div>
+              <span class="mini-tag">Live calculations</span>
+            </div>
+
+            <div class="chart-area" id="overviewChart">
+              <div class="empty-visual">
+                <div class="empty-icon">⌁</div>
+                <strong>No investigation yet</strong>
+                <p>
+                  Run a comparison to visualize
+                  category changes here.
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="panel glass">
+
+            <div class="panel-heading">
+              <div>
+                <span class="section-kicker">QUICK ACCESS</span>
+                <h3>Your next move</h3>
+              </div>
+            </div>
+
+            <button class="quick-action" data-go="dataset">
+              <span class="quick-icon">▤</span>
+              <span>
+                <strong>Import a dataset</strong>
+                <small>Start with a CSV file</small>
+              </span>
+              <span class="quick-arrow">↗</span>
+            </button>
+
+            <button class="quick-action" data-go="investigation">
+              <span class="quick-icon">⌁</span>
+              <span>
+                <strong>Investigate patterns</strong>
+                <small>Compare periods and categories</small>
+              </span>
+              <span class="quick-arrow">↗</span>
+            </button>
+
+            <button class="quick-action" data-go="copilot">
+              <span class="quick-icon">✧</span>
+              <span>
+                <strong>Ask your AI</strong>
+                <small>Explain verified findings</small>
+              </span>
+              <span class="quick-arrow">↗</span>
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- DATASET STUDIO -->
+
+      <section class="view" id="dataset">
+
+        <div class="page-heading">
+          <span class="section-kicker">01 / DATA WORKSPACE</span>
+          <h1>Dataset Studio<span>.</span></h1>
+          <p>
+            Bring your data into your private workspace.
+            Everything is processed in your browser.
+          </p>
+        </div>
+
+        <div class="upload-panel glass">
+
+          <div class="upload-zone" id="dropZone">
+            <div class="upload-icon">⇧</div>
+
+            <h3>Drop your CSV here</h3>
+
+            <p>
+              Or browse files from your computer
+            </p>
+
+            <button class="primary-btn" id="browseBtn">
+              Choose CSV File
+            </button>
+
+            <input
+              type="file"
+              id="csvFile"
+              accept=".csv,text/csv"
+              hidden
+            />
+
+            <small>CSV format · Maximum 10 MB</small>
+          </div>
+
+        </div>
+
+        <div class="dataset-summary glass" id="datasetSummary">
+          <span class="summary-icon">◈</span>
+          <span id="datasetInfo">
+            No dataset uploaded yet.
+          </span>
+        </div>
+
+        <div class="panel glass">
+
+          <div class="panel-heading">
+            <div>
+              <span class="section-kicker">DATA EXPLORER</span>
+              <h3>Dataset preview</h3>
+            </div>
+            <span class="mini-tag" id="previewCount">
+              No data
+            </span>
+          </div>
+
+          <div class="table-scroll" id="datasetPreview">
+            <div class="empty-visual">
+              <div class="empty-icon">▤</div>
+              <strong>Waiting for your data</strong>
+              <p>
+                Upload a CSV to preview the first records.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- INVESTIGATION -->
+
+      <section class="view" id="investigation">
+
+        <div class="page-heading">
+          <span class="section-kicker">02 / INVESTIGATION ENGINE</span>
+          <h1>Investigation Lab<span>.</span></h1>
+          <p>
+            Compare two time periods and identify
+            which categories contributed to the change.
+          </p>
+        </div>
+
+        <div class="panel glass">
+
+          <div class="panel-heading">
+            <div>
+              <span class="section-kicker">CONFIGURATION</span>
+              <h3>Build an investigation</h3>
+            </div>
+            <span class="mini-tag">Period comparison</span>
+          </div>
+
+          <div class="field-grid">
+
+            <label>
+              Date column
+              <select id="dateColumn"></select>
+            </label>
+
+            <label>
+              Metric column
+              <select id="metricColumn"></select>
+            </label>
+
+            <label>
+              Category column
+              <select id="categoryColumn"></select>
+            </label>
+
+          </div>
+
+          <div class="period-grid">
+
+            <div class="period-card">
+              <div class="period-title">
+                <span class="period-dot purple-dot"></span>
+                Period A — Baseline
+              </div>
+
+              <label>
+                Start date
+                <input type="date" id="aStart" />
+              </label>
+
+              <label>
+                End date
+                <input type="date" id="aEnd" />
+              </label>
+            </div>
+
+            <div class="period-card">
+              <div class="period-title">
+                <span class="period-dot mint-dot"></span>
+                Period B — Comparison
+              </div>
+
+              <label>
+                Start date
+                <input type="date" id="bStart" />
+              </label>
+
+              <label>
+                End date
+                <input type="date" id="bEnd" />
+              </label>
+            </div>
+
+          </div>
+
+          <button class="primary-btn" id="investigateBtn">
+            ✦ Run Investigation
+          </button>
+
+          <div class="notice" id="investigationNotice">
+            Select a dataset and configure your comparison.
+          </div>
+
+        </div>
+
+        <div id="investigationResults" hidden>
+
+          <div class="section-heading">
+            <div>
+              <span class="section-kicker">RESULTS</span>
+              <h2>Investigation findings</h2>
+            </div>
+          </div>
+
+          <div class="stats-grid" id="resultMetrics"></div>
+
+          <div class="panel glass">
+
+            <div class="panel-heading">
+              <div>
+                <span class="section-kicker">CONTRIBUTION ANALYSIS</span>
+                <h3>Category comparison</h3>
+              </div>
+            </div>
+
+            <div id="investigationChart"></div>
+
+            <div class="table-scroll" id="resultsTable"></div>
+
+          </div>
+
+          <div class="result-action glass">
+            <div>
+              <strong>Ready for deeper intelligence?</strong>
+              <p>
+                Let your local AI explain these verified findings.
+              </p>
+            </div>
+
+            <button class="primary-btn" data-go="copilot">
+              Open AI Copilot ↗
+            </button>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- AI COPILOT -->
+
+      <section class="view" id="copilot">
+
+        <div class="page-heading">
+          <span class="section-kicker">03 / PRIVATE INTELLIGENCE</span>
+          <h1>AI Copilot<span>.</span></h1>
+          <p>
+            An AI analyst powered by Ollama,
+            running on your own machine.
+          </p>
+        </div>
+
+        <div class="copilot-layout">
+
+          <div class="chat-panel glass">
+
+            <div class="chat-header">
+              <div class="chat-avatar">✦</div>
+
+              <div>
+                <strong>InsightAI Copilot</strong>
+                <small id="chatModelStatus">
+                  Checking local model...
+                </small>
+              </div>
+
+              <button class="text-button" id="clearChat">
+                Clear chat
+              </button>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+
+              <div class="chat-welcome">
+                <div class="welcome-orb">✦</div>
+                <h2>What would you like to discover?</h2>
+                <p>
+                  Run an investigation, then ask me to
+                  explain the results and explore possible
+                  next steps.
+                </p>
+              </div>
+
+            </div>
+
+            <div class="chat-composer">
+
+              <div class="suggestion-row">
+                <button class="suggestion"
+                        data-prompt="Summarize the investigation findings.">
+                  Summarize findings
+                </button>
+
+                <button class="suggestion"
+                        data-prompt="Which categories contributed most to the change?">
+                  Key contributors
+                </button>
+
+                <button class="suggestion"
+                        data-prompt="What should I investigate next?">
+                  Next steps
+                </button>
+              </div>
+
+              <form id="chatForm">
+
+                <textarea
+                  id="chatInput"
+                  rows="2"
+                  placeholder="Ask about your investigation..."
+                  aria-label="Message AI Copilot"
+                ></textarea>
+
+                <button class="send-btn"
+                        id="sendBtn"
+                        type="submit"
+                        aria-label="Send message">
+                  ↑
+                </button>
+
+              </form>
+
+              <small>
+                AI explanations are not verified facts.
+                Review the calculated evidence.
+              </small>
+
+            </div>
+
+          </div>
+
+          <div class="copilot-side">
+
+            <div class="panel glass">
+
+              <span class="section-kicker">AI ENGINE</span>
+              <h3>Local model</h3>
+
+              <div class="model-card">
+                <div class="model-symbol">✦</div>
+                <div>
+                  <strong>llama3.2:3b</strong>
+                  <small>Ollama · On-device inference</small>
+                </div>
+              </div>
+
+              <button class="secondary-btn full-width"
+                      id="connectBtn">
+                ↻ Check Connection
+              </button>
+
+              <p class="connection-detail"
+                 id="connectionStatus">
+                Not connected
+              </p>
+
+            </div>
+
+            <div class="panel glass">
+
+              <span class="section-kicker">EVIDENCE CONTEXT</span>
+              <h3>Investigation data</h3>
+
+              <div id="evidenceStatus">
+                <p class="muted">
+                  No investigation evidence available yet.
+                </p>
+              </div>
+
+              <button class="primary-btn full-width"
+                      id="generateBtn">
+                ✦ Generate AI Brief
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <footer class="app-footer">
+        <span>© InsightAI · Spatial Intelligence</span>
+        <span>Local-first · Browser-powered · Private AI</span>
+      </footer>
+
+    </main>
+
+  </div>
 
   <script src="./app.js"></script>
+
 </body>
 </html>
