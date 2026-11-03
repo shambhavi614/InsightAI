@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0" />
+
+  <title>InsightAI — Local AI Edition</title>
+
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+  <main class="container">
+
+    <header>
+      <div class="logo">◈ InsightAI</div>
+      <span class="edition">LOCAL AI EDITION</span>
+    </header>
+
+    <section class="hero">
+      <div class="eyebrow">
+        ✦ PRIVATE • LOCAL • AI-POWERED
+      </div>
+
+      <h1>Investigate your data with AI.</h1>
+
+      <p>
+        Upload a CSV, calculate verified insights,
+        and ask your own Ollama model to explain them.
+      </p>
+
+      <div class="tags">
+        <span>Local Ollama</span>
+        <span>Browser Analytics</span>
+        <span>No API Key</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>01 — Connect Ollama</h2>
+
+      <p>
+        Ollama must be running on your computer
+        with the llama3.2:3b model installed.
+      </p>
+
+      <button id="connectBtn">
+        Check Ollama Connection
+      </button>
+
+      <div id="connectionStatus" class="status">
+        Not connected
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>02 — Upload Dataset</h2>
+
+      <input
+        id="csvFile"
+        type="file"
+        accept=".csv,text/csv"
+      />
+
+      <div id="datasetInfo" class="status">
+        No dataset selected
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>03 — Investigate Data</h2>
+
+      <div class="fields">
+        <label>
+          Date column
+          <select id="dateColumn"></select>
+        </label>
+
+        <label>
+          Metric column
+          <select id="metricColumn"></select>
+        </label>
+
+        <label>
+          Category column
+          <select id="categoryColumn"></select>
+        </label>
+
+        <label>
+          Period A start
+          <input id="aStart" type="date" />
+        </label>
+
+        <label>
+          Period A end
+          <input id="aEnd" type="date" />
+        </label>
+
+        <label>
+          Period B start
+          <input id="bStart" type="date" />
+        </label>
+
+        <label>
+          Period B end
+          <input id="bEnd" type="date" />
+        </label>
+      </div>
+
+      <button id="investigateBtn">
+        Run Investigation
+      </button>
+
+      <div id="results"></div>
+    </section>
+
+    <section class="card">
+      <h2>04 — AI Investigation Brief</h2>
+
+      <p>
+        AI receives calculated investigation
+        evidence, not the entire CSV.
+      </p>
+
+      <button id="generateBtn">
+        Generate AI Brief
+      </button>
+
+      <div id="aiOutput" class="ai-output">
+        Run an investigation first.
+      </div>
+    </section>
+
+    <footer>
+      InsightAI • Local-first Data Intelligence
+    </footer>
+
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
