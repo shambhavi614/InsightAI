@@ -1,87 +1,115 @@
 # 🧠 InsightAI
 ### Dual-Mode Data Analytics Platform | Streamlit + Local AI (Ollama)
 
-**InsightAI** is a data analytics platform that transforms raw CSV datasets into meaningful insights through interactive dashboards, visualizations, investigation tools, and AI-assisted analysis.
+**InsightAI** is a dual-mode data analytics platform that transforms raw CSV datasets into meaningful insights through interactive dashboards, data investigation, visualizations, and AI-assisted analysis.
 
-The project offers **two distinct editions**: a cloud-hosted analytics dashboard that works without AI installation, and an AI-powered web edition that integrates with locally running Ollama models.
+The project provides two distinct editions:
 
-## 🌐 Live Demos
+- **Analytics Edition:** A publicly accessible Streamlit dashboard that works without Ollama.
+- **AI Edition:** An interactive web application powered by locally running Ollama models for AI-assisted data exploration.
 
-| Edition | Live Website | AI Requirement |
-|---|---|---|
-| 📊 **Analytics Edition** | [Launch Streamlit Dashboard](https://insightai-dataanalyst.streamlit.app/) | No Ollama required |
-| 🤖 **AI Edition** | [Launch AI Web App](https://shambhavi614.github.io/InsightAI/) | Local Ollama required for AI |
-
-> **Note:** Both editions are accessible through a browser. The AI Edition's GitHub Pages deployment hosts only the frontend; AI inference requires Ollama running on the user's computer.
+Both editions are built using free and open-source technologies.
 
 ---
 
-## ✨ Key Features
+## 🌐 Live Demos
+
+| Edition | Live Website | Requirements |
+|---|---|---|
+| 📊 **Analytics Edition** | [Launch Dashboard](https://insightai-dataanalyst.streamlit.app/) | Browser only |
+| 🤖 **AI Edition** | [Launch AI Edition](https://shambhavi614.github.io/InsightAI/) | Local Ollama for AI features |
+
+> **Important:** The AI Edition is hosted on GitHub Pages as a frontend-only application. To use the AI Copilot, users must have Ollama installed and running locally. The Analytics Edition works without Ollama.
+
+---
+
+## 📸 Project Screenshots
 
 ### 📊 Analytics Edition — Without Ollama
 
-Built using **Python and Streamlit**, this edition focuses on accessible, interactive data analysis.
+![InsightAI Analytics Dashboard](screenshots/analytics-edition.png)
 
-- CSV upload and dataset exploration
-- Dataset summaries and statistical insights
-- Interactive charts and visualizations
-- Investigation of trends and category-level changes
-- PDF report generation
-- Cloud deployment without local AI dependencies
-
-**Tech Stack:** Python, Streamlit, Pandas, NumPy, Plotly, ReportLab
-
-**Hosting:** Streamlit Community Cloud
+**Live Demo:** https://insightai-dataanalyst.streamlit.app/
 
 ### 🤖 AI Edition — With Ollama
 
-Built using **HTML, CSS, and JavaScript**, this edition combines interactive analytics with a locally hosted language model.
+![InsightAI AI Edition Dashboard](screenshots/ai-edition.png)
 
-- CSV upload and data exploration
-- Interactive visualizations and Investigation Lab
-- AI Copilot for natural-language analytical questions
-- Streaming AI responses
-- Evidence-grounded prompts with calculated data summaries
-- Local Llama 3.2 integration
-- Responsive Spatial Glass user interface
+**Live Demo:** https://shambhavi614.github.io/InsightAI/
 
-**Tech Stack:** HTML, CSS, JavaScript, Ollama, Llama 3.2
+### 🧠 AI Copilot — Local LLM Integration
 
-**Hosting:** GitHub Pages (frontend only)
+![InsightAI AI Copilot](screenshots/ai-copilot.png)
+
+*AI-assisted analysis using a locally running Llama 3.2 model through Ollama.*
+
+---
+
+## ✨ Features
+
+### 📊 Analytics Edition (Without Ollama)
+
+Built with Python and Streamlit for accessible, interactive data analysis.
+
+- Upload CSV datasets
+- Explore dataset summaries and statistics
+- Visualize trends using interactive Plotly charts
+- Investigate changes across categories and time periods
+- Generate downloadable PDF reports
+- Access the dashboard directly from a browser
+- No local AI installation required
+
+**Technology:** Python, Streamlit, Pandas, NumPy, Plotly, ReportLab
+
+**Deployment:** Streamlit Community Cloud
+
+### 🤖 AI Edition (With Ollama)
+
+A browser-based analytics experience with optional local AI-powered assistance.
+
+- Upload and explore CSV datasets
+- Interactive charts and visualizations
+- Investigation Lab for data exploration
+- AI Copilot for natural-language questions
+- Streaming AI-generated responses
+- Evidence-grounded prompts using calculated dataset summaries
+- Local Llama 3.2 model integration
+- Responsive Spatial Glass-inspired user interface
+
+**Technology:** HTML5, CSS3, JavaScript, Ollama, Llama 3.2
+
+**Deployment:** GitHub Pages (frontend only)
 
 ---
 
 ## ⚖️ Edition Comparison
 
-| Capability | Analytics Edition | AI Edition |
+| Feature | Analytics Edition | AI Edition |
 |---|---|---|
 | CSV Upload | ✅ | ✅ |
-| Data Exploration | ✅ | ✅ |
+| Dataset Exploration | ✅ | ✅ |
 | Interactive Charts | ✅ | ✅ |
 | Investigation Lab | ✅ | ✅ |
 | PDF Report Generation | ✅ | — |
-| Natural-Language AI Copilot | ❌ | ✅ |
+| AI Copilot | ❌ | ✅ |
 | Streaming AI Responses | ❌ | ✅ |
-| Ollama Installation | Not required | Required for AI |
-| Deployment | Streamlit Cloud | GitHub Pages |
+| Ollama Required | ❌ | ✅ For AI |
+| Hosting | Streamlit Cloud | GitHub Pages |
 
 ---
 
-## 🛠️ Technology Stack
+## 🛠️ Tech Stack
 
-**Frontend:** HTML5, CSS3, JavaScript, Streamlit
-
-**Backend & Analytics:** Python, Pandas, NumPy
-
-**Visualization:** Plotly
-
-**AI Integration:** Ollama, Llama 3.2 (1B/3B)
-
-**Reporting:** ReportLab
-
-**Deployment:** Streamlit Community Cloud, GitHub Pages
-
-**Version Control:** Git, GitHub
+| Category | Technologies |
+|---|---|
+| Programming | Python, JavaScript |
+| Frontend | HTML5, CSS3, Streamlit |
+| Data Processing | Pandas, NumPy |
+| Data Visualization | Plotly |
+| AI Integration | Ollama, Llama 3.2 (1B / 3B) |
+| PDF Generation | ReportLab |
+| Deployment | Streamlit Community Cloud, GitHub Pages |
+| Version Control | Git, GitHub |
 
 ---
 
@@ -96,120 +124,166 @@ cd InsightAI
 
 ### 2. Run the Analytics Edition
 
-Create a virtual environment:
+Create a Python virtual environment:
 
 ```bash
 python -m venv .venv
 ```
 
-Activate it on Windows:
+Activate the environment.
+
+**Windows:**
 
 ```powershell
 .venv\Scripts\activate
 ```
 
-Install dependencies:
+**macOS / Linux:**
+
+```bash
+source .venv/bin/activate
+```
+
+Install the required packages:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Launch the application:
+Run the application:
 
 ```bash
 streamlit run app.py
 ```
 
+The Streamlit dashboard will open in your browser, usually at `http://localhost:8501`.
+
+For the public demo deployment, Ollama-dependent functionality is disabled through the deployment configuration.
+
 ### 3. Run the AI Edition
 
-Install [Ollama](https://ollama.com/) and download a supported model:
+Install Ollama from:
+
+https://ollama.com/
+
+Download the lightweight Llama 3.2 model:
 
 ```bash
 ollama pull llama3.2:1b
 ```
 
-Ensure the Ollama service is running.
+Ensure Ollama is running and accessible on your computer.
 
-Open `ai-web/index.html` through a local development server, or visit the [AI Edition](https://shambhavi614.github.io/InsightAI/).
+Open the AI Edition frontend through a local development server using the files inside the `ai-web` directory, or visit:
 
-The AI Copilot requires the browser to be able to access the local Ollama API. Depending on the environment, Ollama's allowed origins may need configuration.
+https://shambhavi614.github.io/InsightAI/
+
+The AI Copilot communicates with the local Ollama API. Browser access and Ollama origin settings may need configuration depending on the environment.
 
 ---
 
-## 🏗️ Project Architecture
+## 🏗️ System Architecture
 
 ```text
-                       InsightAI
-                           |
-             +-------------+-------------+
-             |                           |
-      Analytics Edition              AI Edition
-             |                           |
-         Streamlit                 HTML/CSS/JS
-             |                           |
-      Pandas + NumPy              CSV Processing
-             |                           |
-      Data Investigation          Investigation Lab
-             |                           |
-       Plotly Charts              Local Ollama API
-             |                           |
-       PDF Reporting              Llama 3.2 Model
-             |                           |
-       Streamlit Cloud              GitHub Pages
+                        InsightAI
+                            |
+              +-------------+-------------+
+              |                           |
+       Analytics Edition              AI Edition
+              |                           |
+          Streamlit                 HTML / CSS / JS
+              |                           |
+       CSV Data Upload             CSV Data Upload
+              |                           |
+       Pandas + NumPy              Data Processing
+              |                           |
+       Investigation Engine        Investigation Lab
+              |                           |
+       Plotly Visualizations       Interactive Charts
+              |                           |
+       PDF Report Generator        Ollama AI Copilot
+              |                           |
+       Streamlit Cloud             Local Llama 3.2
+                                          |
+                                     GitHub Pages
+                                   (Frontend Hosting)
 ```
+
+---
 
 ## 📁 Project Structure
 
 ```text
 InsightAI/
+│
 ├── app.py
 ├── deployment.py
 ├── requirements.txt
+├── README.md
+│
 ├── core/
 │   ├── investigation_engine.py
 │   ├── insight_narrator.py
 │   └── report_generator.py
+│
 ├── utils/
 │   └── charts.py
+│
 ├── styles/
 │   └── theme.py
-└── ai-web/
-    ├── index.html
-    ├── style.css
-    └── app.js
+│
+├── ai-web/
+│   ├── index.html
+│   ├── style.css
+│   └── app.js
+│
+└── screenshots/
+    ├── analytics-edition.png
+    ├── ai-edition.png
+    └── ai-copilot.png
 ```
 
-*Simplified structure showing the primary application components.*
+*Simplified project structure showing the primary components and screenshot assets.*
 
 ---
 
-## 🔒 Privacy & Deployment
+## 🔒 Privacy and Deployment
 
-The Analytics Edition processes uploaded data within its Streamlit application environment and does not require an AI service.
+**Analytics Edition:** Data is processed by the Streamlit application running in the cloud. No local Ollama installation is needed.
 
-The AI Edition uses a local Ollama instance for language-model inference. Its AI functionality is not hosted on GitHub Pages and does not require a paid AI API.
+**AI Edition:** AI inference is performed through a locally running Ollama model rather than a paid cloud AI API. The GitHub Pages deployment does not host the language model.
 
-Users should avoid uploading confidential datasets to public cloud applications unless the deployment's data-handling practices meet their requirements.
+For sensitive or confidential datasets, users should evaluate the privacy and security implications of their chosen deployment.
+
+---
+
+## 🎯 Project Highlights
+
+- Developed two deployment editions for different user requirements.
+- Integrated a local large language model into a browser-based analytics workflow.
+- Implemented streaming AI responses for a more responsive user experience.
+- Built data investigation and interactive visualization features.
+- Added PDF reporting to the Streamlit analytics workflow.
+- Deployed both editions using free hosting platforms.
+- Troubleshot deployment dependencies and frontend compatibility issues.
 
 ---
 
 ## 🔮 Future Enhancements
 
 - Optional cloud-hosted AI inference
-- Excel and additional file format support
-- Advanced statistical analysis
-- Improved automated insight verification
-- Expanded reporting and visualization options
+- Excel and additional dataset formats
+- More advanced statistical analysis
+- Improved AI-generated insight verification
+- Expanded reporting and visualization capabilities
 
 ---
 
-## 👩‍💻 Developed By
+## 👩‍💻 Author
 
 **Shambhavi Jha**
 
 B.Tech — Computer Science & Engineering (Artificial Intelligence)
-
-Galgotias College of Engineering and Technology
 
 **GitHub:** [shambhavi614](https://github.com/shambhavi614)
 
