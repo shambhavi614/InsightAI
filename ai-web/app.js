@@ -2,26 +2,23 @@
 "use strict";
 
 const OLLAMA_URL = "http://127.0.0.1:11434";
-const MODEL = "llama3.2:3b";
-
+const MODEL = "llama3.2:1b";
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const MAX_CHAT_HISTORY = 8;
-
 const $ = (id) => document.getElementById(id);
 
 let dataset = [];
 let columns = [];
 let datasetName = "";
 let latestEvidence = null;
-
 let investigationCount = 0;
 let ollamaConnected = false;
 let chatHistory = [];
 let isGenerating = false;
 
-/* -----------------------------------
-   HELPERS
------------------------------------ */
+// ===================================
+// HELPERS
+// ===================================
 
 function formatNumber(value) {
   return Number(value).toLocaleString("en-IN", {
@@ -40,15 +37,8 @@ function setText(id, value) {
 
 function createElement(tag, className, text) {
   const element = document.createElement(tag);
-
-  if (className) {
-    element.className = className;
-  }
-
-  if (text !== undefined) {
-    element.textContent = String(text);
-  }
-
+  if (className) element.className = className;
+  if (text !== undefined) element.textContent = String(text);
   return element;
 }
 
@@ -59,15 +49,12 @@ function showNotice(message) {
 function updateStats() {
   setText("statRows", formatNumber(dataset.length));
   setText("statColumns", formatNumber(columns.length));
-  setText(
-    "statInvestigations",
-    formatNumber(investigationCount)
-  );
+  setText("statInvestigations", formatNumber(investigationCount));
 }
 
-/* -----------------------------------
-   NAVIGATION
------------------------------------ */
+// ===================================
+// NAVIGATION
+// ===================================
 
 const viewTitles = {
   dashboard: "Overview",
@@ -79,65 +66,53 @@ const viewTitles = {
 function navigate(viewId) {
   if (!viewTitles[viewId]) return;
 
-  document.querySelectorAll(".view").forEach(
-    (view) => view.classList.remove("active")
-  );
+  document.querySelectorAll(".view").forEach((view) => {
+    view.classList.remove("active");
+  });
 
-  document.querySelectorAll(".nav-item").forEach(
-    (button) => button.classList.remove("active")
-  );
+  document.querySelectorAll(".nav-item").forEach((button) => {
+    button.classList.remove("active");
+  });
 
   $(viewId).classList.add("active");
 
-  document.querySelector(
-    `.nav-item[data-view="${viewId}"]`
-  )?.classList.add("active");
+  document
+    .querySelector(`.nav-item[data-view="${viewId}"]`)
+    ?.classList.add("active");
 
   setText("currentView", viewTitles[viewId]);
   setText("topbarTitle", viewTitles[viewId]);
 
   $("sidebar").classList.remove("open");
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
-  });
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-document.querySelectorAll("[data-view]").forEach(
-  (button) => {
-    button.addEventListener("click", () => {
-      navigate(button.dataset.view);
-    });
-  }
-);
+document.querySelectorAll("[data-view]").forEach((button) => {
+  button.addEventListener("click", () => {
+    navigate(button.dataset.view);
+  });
+});
 
-document.querySelectorAll("[data-go]").forEach(
-  (button) => {
-    button.addEventListener("click", () => {
-      navigate(button.dataset.go);
-    });
-  }
-);
+document.querySelectorAll("[data-go]").forEach((button) => {
+  button.addEventListener("click", () => {
+    navigate(button.dataset.go);
+  });
+});
 
 $("menuBtn").addEventListener("click", () => {
   $("sidebar").classList.toggle("open");
 });
 
-/* -----------------------------------
-   OLLAMA CONNECTION
------------------------------------ */
+// ===================================
+// OLLAMA CONNECTION
+// ===================================
 
 function updateConnection(connected, message) {
   ollamaConnected = connected;
 
   const pill = $("connectionPill");
-
   pill.classList.remove("connected", "failed");
-
-  pill.classList.add(
-    connected ? "connected" : "failed"
-  );
+  pill.classList.add(connected ? "connected" : "failed");
 
   setText(
     "connectionLabel",
@@ -153,9 +128,7 @@ function updateConnection(connected, message) {
 
   setText(
     "chatModelStatus",
-    connected
-      ? `${MODEL} · Local`
-      : "Ollama disconnected"
+    connected ? `${MODEL} · Local` : "Ollama disconnected"
   );
 }
 
@@ -166,27 +139,18 @@ async function checkOllama() {
   );
 
   try {
-    const response = await fetch(
-      `${OLLAMA_URL}/api/tags`,
-      {
-        signal: AbortSignal.timeout(6000),
-      }
-    );
+    const response = await fetch(`${OLLAMA_URL}/api/tags`, {
+      signal: AbortSignal.timeout(6000),
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
 
     const data = await response.json();
-
     const models = data.models || [];
 
-    const installed = models.some(
-      (model) =>
-        model.name === MODEL ||
-        model.name === "llama3.2:latest" &&
-        MODEL === "llama3.2:latest"
-    );
+    const installed = models.some((model) => model.name === MODEL);
 
     if (!installed) {
       updateConnection(
@@ -200,35 +164,28 @@ async function checkOllama() {
       true,
       `Connected successfully — ${MODEL} is available.`
     );
-
   } catch (error) {
     updateConnection(
       false,
-      "Cannot reach local Ollama. Check that it is running, the website origin is allowed, and your browser permits local-network access. " +
-      error.message
+      "Cannot reach local Ollama. Check that it is running, " +
+        "the website origin is allowed, and your browser permits " +
+        "local-network access. " +
+        error.message
     );
   }
 }
 
-$("refreshConnection").addEventListener(
-  "click",
-  checkOllama
-);
+$("refreshConnection").addEventListener("click", checkOllama);
+$("connectBtn").addEventListener("click", checkOllama);
 
-$("connectBtn").addEventListener(
-  "click",
-  checkOllama
-);
-
-/* -----------------------------------
-   CSV PARSER
------------------------------------ */
+// ===================================
+// CSV PARSER
+// ===================================
 
 function parseCSV(text) {
   text = text.replace(/^\uFEFF/, "");
 
   const rows = [];
-
   let row = [];
   let field = "";
   let quoted = false;
@@ -237,10 +194,7 @@ function parseCSV(text) {
     const char = text[i];
 
     if (quoted) {
-      if (
-        char === '"' &&
-        text[i + 1] === '"'
-      ) {
+      if (char === '"' && text[i + 1] === '"') {
         field += '"';
         i++;
       } else if (char === '"') {
@@ -248,15 +202,12 @@ function parseCSV(text) {
       } else {
         field += char;
       }
-
       continue;
     }
 
     if (char === '"') {
       if (field !== "") {
-        throw new Error(
-          "Unexpected quote in CSV field."
-        );
+        throw new Error("Unexpected quote in CSV field.");
       }
       quoted = true;
     } else if (char === ",") {
@@ -273,9 +224,7 @@ function parseCSV(text) {
   }
 
   if (quoted) {
-    throw new Error(
-      "CSV has an unclosed quoted field."
-    );
+    throw new Error("CSV has an unclosed quoted field.");
   }
 
   if (field !== "" || row.length) {
@@ -287,26 +236,18 @@ function parseCSV(text) {
     throw new Error("The CSV file is empty.");
   }
 
-  const headers = rows.shift().map(
-    (value) => value.trim()
-  );
+  const headers = rows.shift().map((value) => value.trim());
 
   if (headers.some((header) => !header)) {
-    throw new Error(
-      "CSV contains empty column names."
-    );
+    throw new Error("CSV contains empty column names.");
   }
 
   if (new Set(headers).size !== headers.length) {
-    throw new Error(
-      "CSV contains duplicate column names."
-    );
+    throw new Error("CSV contains duplicate column names.");
   }
 
   const records = rows
-    .filter((values) =>
-      values.some((value) => value.trim() !== "")
-    )
+    .filter((values) => values.some((value) => value.trim() !== ""))
     .map((values, index) => {
       if (values.length !== headers.length) {
         throw new Error(
@@ -315,19 +256,16 @@ function parseCSV(text) {
       }
 
       return Object.fromEntries(
-        headers.map((header, i) => [
-          header,
-          values[i],
-        ])
+        headers.map((header, i) => [header, values[i]])
       );
     });
 
   return { headers, records };
 }
 
-/* -----------------------------------
-   FILE UPLOAD
------------------------------------ */
+// ===================================
+// FILE UPLOAD
+// ===================================
 
 const fileInput = $("csvFile");
 const dropZone = $("dropZone");
@@ -338,10 +276,7 @@ $("browseBtn").addEventListener("click", () => {
 
 fileInput.addEventListener("change", async () => {
   const file = fileInput.files[0];
-
-  if (file) {
-    await loadDataset(file);
-  }
+  if (file) await loadDataset(file);
 });
 
 dropZone.addEventListener("dragover", (event) => {
@@ -355,30 +290,20 @@ dropZone.addEventListener("dragleave", () => {
 
 dropZone.addEventListener("drop", async (event) => {
   event.preventDefault();
-
   dropZone.classList.remove("dragging");
 
   const file = event.dataTransfer.files[0];
-
-  if (file) {
-    await loadDataset(file);
-  }
+  if (file) await loadDataset(file);
 });
 
 async function loadDataset(file) {
   try {
-    if (
-      !file.name.toLowerCase().endsWith(".csv")
-    ) {
-      throw new Error(
-        "Please upload a CSV file."
-      );
+    if (!file.name.toLowerCase().endsWith(".csv")) {
+      throw new Error("Please upload a CSV file.");
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      throw new Error(
-        "CSV must be smaller than 10 MB."
-      );
+      throw new Error("CSV must be smaller than 10 MB.");
     }
 
     const text = await file.text();
@@ -403,9 +328,7 @@ async function loadDataset(file) {
     );
 
     $("chatMessages").replaceChildren();
-    $("chatMessages").appendChild(
-      createChatWelcome()
-    );
+    $("chatMessages").appendChild(createChatWelcome());
 
     updateEvidencePanel();
     updateStats();
@@ -423,24 +346,18 @@ async function loadDataset(file) {
     renderDatasetPreview();
     populateColumnSelectors();
 
-    showNotice(
-      "Dataset loaded. Configure your investigation."
-    );
-
+    showNotice("Dataset loaded. Configure your investigation.");
   } catch (error) {
     setText("datasetInfo", error.message);
   }
 }
 
-/* -----------------------------------
-   DATASET PREVIEW
------------------------------------ */
+// ===================================
+// DATASET PREVIEW
+// ===================================
 
 function createEmptyState(title, description) {
-  const wrapper = createElement(
-    "div",
-    "empty-visual"
-  );
+  const wrapper = createElement("div", "empty-visual");
 
   wrapper.append(
     createElement("div", "empty-icon", "◈"),
@@ -452,10 +369,7 @@ function createEmptyState(title, description) {
 }
 
 function createChatWelcome() {
-  const wrapper = createElement(
-    "div",
-    "chat-welcome"
-  );
+  const wrapper = createElement("div", "chat-welcome");
 
   wrapper.append(
     createElement("div", "welcome-orb", "✦"),
@@ -475,18 +389,12 @@ function createChatWelcome() {
 }
 
 function createTable(headers, records) {
-  const table = createElement(
-    "table",
-    "data-table"
-  );
-
+  const table = createElement("table", "data-table");
   const thead = document.createElement("thead");
   const headingRow = document.createElement("tr");
 
   headers.forEach((header) => {
-    headingRow.appendChild(
-      createElement("th", "", header)
-    );
+    headingRow.appendChild(createElement("th", "", header));
   });
 
   thead.appendChild(headingRow);
@@ -498,102 +406,82 @@ function createTable(headers, records) {
     const tr = document.createElement("tr");
 
     record.forEach((value) => {
-      tr.appendChild(
-        createElement("td", "", value)
-      );
+      tr.appendChild(createElement("td", "", value));
     });
 
     tbody.appendChild(tr);
   });
 
   table.appendChild(tbody);
-
   return table;
 }
 
 function renderDatasetPreview() {
   const container = $("datasetPreview");
-
   container.replaceChildren();
 
   const preview = dataset
     .slice(0, 10)
-    .map((row) =>
-      columns.map((column) => row[column])
-    );
+    .map((row) => columns.map((column) => row[column]));
 
-  container.appendChild(
-    createTable(columns, preview)
-  );
+  container.appendChild(createTable(columns, preview));
 }
 
 function fillSelect(id) {
   const select = $(id);
-
   select.replaceChildren();
 
   columns.forEach((column) => {
     const option = document.createElement("option");
-
     option.value = column;
     option.textContent = column;
-
     select.appendChild(option);
   });
 }
 
 function chooseColumn(id, candidates) {
-  const match = columns.find(
-    (column) =>
-      candidates.some(
-        (candidate) =>
-          column.toLowerCase() === candidate
-      )
+  const match = columns.find((column) =>
+    candidates.some((candidate) => column.toLowerCase() === candidate)
   );
 
-  if (match) {
-    $(id).value = match;
-  }
+  if (match) $(id).value = match;
 }
 
 function populateColumnSelectors() {
-  [
-    "dateColumn",
-    "metricColumn",
-    "categoryColumn",
-  ].forEach(fillSelect);
+  ["dateColumn", "metricColumn", "categoryColumn"].forEach(fillSelect);
 
-  chooseColumn(
-    "dateColumn",
-    ["date", "order_date", "transaction_date"]
-  );
+  chooseColumn("dateColumn", [
+    "date",
+    "order_date",
+    "transaction_date",
+  ]);
 
-  chooseColumn(
-    "metricColumn",
-    ["sales", "revenue", "amount", "total"]
-  );
+  chooseColumn("metricColumn", [
+    "sales",
+    "revenue",
+    "amount",
+    "total",
+  ]);
 
-  chooseColumn(
-    "categoryColumn",
-    ["product", "category", "region", "segment"]
-  );
+  chooseColumn("categoryColumn", [
+    "product",
+    "category",
+    "region",
+    "segment",
+  ]);
 }
 
-/* -----------------------------------
-   INVESTIGATION ENGINE
------------------------------------ */
+// ===================================
+// INVESTIGATION ENGINE
+// ===================================
 
 function parseISODate(value) {
   const text = String(value).trim();
-
-  const match =
-    /^(\d{4})-(\d{2})-(\d{2})/.exec(text);
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(text);
 
   if (!match) return null;
 
-  const iso =
-    `${match[1]}-${match[2]}-${match[3]}`;
-
+  const iso = `${match[1]}-${match[2]}-${match[3]}`;
   const date = new Date(`${iso}T00:00:00Z`);
 
   if (
@@ -610,17 +498,12 @@ function getPeriodRows(column, start, end) {
   return dataset.filter((row) => {
     const date = parseISODate(row[column]);
 
-    return (
-      date !== null &&
-      date >= start &&
-      date <= end
-    );
+    return date !== null && date >= start && date <= end;
   });
 }
 
 function aggregateRows(rows, metric, category) {
   const totals = new Map();
-
   let total = 0;
   let validValues = 0;
   let skippedValues = 0;
@@ -640,16 +523,12 @@ function aggregateRows(rows, metric, category) {
       return;
     }
 
-    const key =
-      String(row[category]).trim() || "(blank)";
+    const key = String(row[category]).trim() || "(blank)";
 
     total += value;
     validValues++;
 
-    totals.set(
-      key,
-      (totals.get(key) || 0) + value
-    );
+    totals.set(key, (totals.get(key) || 0) + value);
   });
 
   return {
@@ -676,43 +555,34 @@ function runInvestigation() {
   const bStart = $("bStart").value;
   const bEnd = $("bEnd").value;
 
-  if (
-    !aStart || !aEnd ||
-    !bStart || !bEnd
-  ) {
+  if (!aStart || !aEnd || !bStart || !bEnd) {
     showNotice("Please select all four dates.");
     return;
   }
 
-  if (
-    aStart > aEnd ||
-    bStart > bEnd ||
-    aEnd >= bStart
-  ) {
+  if (aStart > aEnd || bStart > bEnd || aEnd >= bStart) {
     showNotice(
       "Use valid non-overlapping periods, with Period A before Period B."
     );
     return;
   }
 
-  const rowsA = getPeriodRows(
-    dateColumn, aStart, aEnd
-  );
-
-  const rowsB = getPeriodRows(
-    dateColumn, bStart, bEnd
-  );
+  const rowsA = getPeriodRows(dateColumn, aStart, aEnd);
+  const rowsB = getPeriodRows(dateColumn, bStart, bEnd);
 
   const resultA = aggregateRows(
-    rowsA, metricColumn, categoryColumn
+    rowsA,
+    metricColumn,
+    categoryColumn
   );
 
   const resultB = aggregateRows(
-    rowsB, metricColumn, categoryColumn
+    rowsB,
+    metricColumn,
+    categoryColumn
   );
 
-  const change =
-    resultB.total - resultA.total;
+  const change = resultB.total - resultA.total;
 
   const percentage =
     resultA.total === 0
@@ -724,27 +594,20 @@ function runInvestigation() {
     ...resultB.totals.keys(),
   ]);
 
-  const breakdown = [...categoryNames].map(
-    (name) => {
-      const periodA =
-        resultA.totals.get(name) || 0;
+  const breakdown = [...categoryNames].map((name) => {
+    const periodA = resultA.totals.get(name) || 0;
+    const periodB = resultB.totals.get(name) || 0;
 
-      const periodB =
-        resultB.totals.get(name) || 0;
-
-      return {
-        category: name,
-        period_a: periodA,
-        period_b: periodB,
-        change: periodB - periodA,
-      };
-    }
-  );
+    return {
+      category: name,
+      period_a: periodA,
+      period_b: periodB,
+      change: periodB - periodA,
+    };
+  });
 
   breakdown.sort(
-    (a, b) =>
-      Math.abs(b.change) -
-      Math.abs(a.change)
+    (a, b) => Math.abs(b.change) - Math.abs(a.change)
   );
 
   latestEvidence = {
@@ -787,20 +650,14 @@ function runInvestigation() {
   );
 }
 
-$("investigateBtn").addEventListener(
-  "click",
-  runInvestigation
-);
+$("investigateBtn").addEventListener("click", runInvestigation);
 
-/* -----------------------------------
-   RESULT CARDS
------------------------------------ */
+// ===================================
+// RESULT CARDS
+// ===================================
 
 function resultCard(label, value, note, color) {
-  const card = createElement(
-    "div",
-    "stat-card glass"
-  );
+  const card = createElement("div", "stat-card glass");
 
   const icon = createElement(
     "div",
@@ -825,7 +682,6 @@ function renderInvestigationResults() {
 
   const evidence = latestEvidence;
   const metrics = $("resultMetrics");
-
   metrics.replaceChildren();
 
   metrics.append(
@@ -862,23 +718,17 @@ function renderInvestigationResults() {
     "Change",
   ];
 
-  const records =
-    evidence.category_contributions.map(
-      (row) => [
-        row.category,
-        formatNumber(row.period_a),
-        formatNumber(row.period_b),
-        formatNumber(row.change),
-      ]
-    );
+  const records = evidence.category_contributions.map((row) => [
+    row.category,
+    formatNumber(row.period_a),
+    formatNumber(row.period_b),
+    formatNumber(row.change),
+  ]);
 
   const tableContainer = $("resultsTable");
-
   tableContainer.replaceChildren();
 
-  tableContainer.appendChild(
-    createTable(headers, records)
-  );
+  tableContainer.appendChild(createTable(headers, records));
 
   renderChart(
     "investigationChart",
@@ -891,13 +741,12 @@ function renderInvestigationResults() {
   );
 }
 
-/* -----------------------------------
-   CATEGORY CHART
------------------------------------ */
+// ===================================
+// CATEGORY CHART
+// ===================================
 
 function renderChart(containerId, rows) {
   const container = $(containerId);
-
   container.replaceChildren();
 
   if (!rows.length) {
@@ -910,57 +759,42 @@ function renderChart(containerId, rows) {
     return;
   }
 
-  // The bar chart shows magnitude only.
-  // Signed changes remain visible in the table.
+  // Bars show magnitude; signed values remain in the table.
   const topRows = rows.slice(0, 8);
 
   const maxValue = Math.max(
     1,
-    ...topRows.flatMap(
-      (row) => [
-        Math.abs(row.period_a),
-        Math.abs(row.period_b),
-      ]
-    )
+    ...topRows.flatMap((row) => [
+      Math.abs(row.period_a),
+      Math.abs(row.period_b),
+    ])
   );
 
-  const chart = createElement(
-    "div",
-    "bar-chart"
-  );
+  const chart = createElement("div", "bar-chart");
 
   topRows.forEach((row) => {
-    const group = createElement(
-      "div",
-      "bar-group"
-    );
+    const group = createElement("div", "bar-group");
+    const pair = createElement("div", "bar-pair");
 
-    const pair = createElement(
-      "div",
-      "bar-pair"
-    );
+    const barA = createElement("div", "bar bar-a");
+    const barB = createElement("div", "bar bar-b");
 
-    const barA = createElement(
-      "div",
-      "bar bar-a"
-    );
+    barA.style.height = `${
+      Math.max(
+        1,
+        (Math.abs(row.period_a) / maxValue) * 100
+      )
+    }%`;
 
-    const barB = createElement(
-      "div",
-      "bar bar-b"
-    );
+    barB.style.height = `${
+      Math.max(
+        1,
+        (Math.abs(row.period_b) / maxValue) * 100
+      )
+    }%`;
 
-    barA.style.height =
-      `${Math.max(1, Math.abs(row.period_a) / maxValue * 100)}%`;
-
-    barB.style.height =
-      `${Math.max(1, Math.abs(row.period_b) / maxValue * 100)}%`;
-
-    barA.title =
-      `Period A: ${formatNumber(row.period_a)}`;
-
-    barB.title =
-      `Period B: ${formatNumber(row.period_b)}`;
+    barA.title = `Period A: ${formatNumber(row.period_a)}`;
+    barB.title = `Period B: ${formatNumber(row.period_b)}`;
 
     pair.append(barA, barB);
 
@@ -971,15 +805,11 @@ function renderChart(containerId, rows) {
     );
 
     label.title = row.category;
-
     group.append(pair, label);
     chart.appendChild(group);
   });
 
-  const legend = createElement(
-    "div",
-    "chart-legend"
-  );
+  const legend = createElement("div", "chart-legend");
 
   const labelA = createElement("span");
   const dotA = createElement(
@@ -996,19 +826,17 @@ function renderChart(containerId, rows) {
   );
 
   labelB.append(dotB, " Period B");
-
   legend.append(labelA, labelB);
 
   container.append(chart, legend);
 }
 
-/* -----------------------------------
-   EVIDENCE PANEL
------------------------------------ */
+// ===================================
+// EVIDENCE PANEL
+// ===================================
 
 function updateEvidencePanel() {
   const container = $("evidenceStatus");
-
   container.replaceChildren();
 
   if (!latestEvidence) {
@@ -1033,24 +861,17 @@ function updateEvidencePanel() {
   ];
 
   details.forEach((detail) => {
-    container.appendChild(
-      createElement("p", "", detail)
-    );
+    container.appendChild(createElement("p", "", detail));
   });
 }
 
-/* -----------------------------------
-   AI CHAT
------------------------------------ */
+// ===================================
+// AI CHAT — LIVE STREAMING
+// ===================================
 
 function addMessage(role, content) {
-  const welcome = document.querySelector(
-    ".chat-welcome"
-  );
-
-  if (welcome) {
-    welcome.remove();
-  }
+  const welcome = document.querySelector(".chat-welcome");
+  if (welcome) welcome.remove();
 
   const wrapper = createElement(
     "div",
@@ -1070,7 +891,6 @@ function addMessage(role, content) {
   );
 
   wrapper.append(roleLabel, bubble);
-
   $("chatMessages").appendChild(wrapper);
 
   $("chatMessages").scrollTop =
@@ -1081,7 +901,6 @@ function addMessage(role, content) {
 
 const SYSTEM_PROMPT = `
 You are InsightAI, a careful AI data investigator.
-
 Your task is to explain verified numerical evidence.
 
 Rules:
@@ -1095,6 +914,18 @@ Rules:
 - Provide concise, useful explanations.
 - Mention skipped or invalid metric values when relevant.
 - Do not claim access to the original CSV rows.
+- Keep answers concise.
+- A negative category change always indicates a decline.
+- A positive category change always indicates an increase.
+- Never describe a negative change as growth.
+- Verify that all category-level conclusions match the supplied numbers.
+- If all category changes are negative, explicitly state that all categories declined.
+- Use verified_category_ranking as the authoritative source for contributor rankings.
+- When asked for top contributors, list categories in ascending rank order (1, 2, 3).
+- Never skip a higher-ranked category in favor of a lower-ranked category.
+- Negative change means decline; positive change means increase.
+- Never claim a category increased when its change is negative.
+- Do not invent or modify numerical values.
 `;
 
 async function askAI(question) {
@@ -1128,9 +959,27 @@ async function askAI(question) {
   );
 
   try {
-    const evidence = JSON.stringify(
-      latestEvidence
-    );
+    const rankedCategories = [...latestEvidence.category_contributions]
+  .sort((a, b) => Math.abs(b.change) - Math.abs(a.change))
+  .map((item, index) => ({
+    rank: index + 1,
+    category: item.category,
+    change: item.change,
+    direction:
+      item.change < 0
+        ? "DECLINE"
+        : item.change > 0
+          ? "INCREASE"
+          : "NO CHANGE",
+  }));
+
+const evidence = JSON.stringify({
+  ...latestEvidence,
+  verified_category_ranking: rankedCategories,
+  ranking_method: "Descending absolute change",
+  ranking_instruction:
+    "Use verified_category_ranking for contributor rankings. Never reorder or invent rankings.",
+});
 
     const messages = [
       {
@@ -1139,9 +988,7 @@ async function askAI(question) {
       },
       {
         role: "user",
-        content:
-          "Verified investigation evidence:\n" +
-          evidence,
+        content: "Verified investigation evidence:\n" + evidence,
       },
       ...chatHistory.slice(-MAX_CHAT_HISTORY),
       {
@@ -1150,24 +997,21 @@ async function askAI(question) {
       },
     ];
 
-    const response = await fetch(
-      `${OLLAMA_URL}/api/chat`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    const response = await fetch(`${OLLAMA_URL}/api/chat`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        stream: true,
+        messages,
+        options: {
+          temperature: 0.1,
+          num_predict: 300,
         },
-        body: JSON.stringify({
-          model: MODEL,
-          stream: false,
-          messages,
-          options: {
-            temperature: 0.1,
-            num_predict: 800,
-          },
-        }),
-      }
-    );
+      }),
+    });
 
     if (!response.ok) {
       throw new Error(
@@ -1175,12 +1019,69 @@ async function askAI(question) {
       );
     }
 
-    const data = await response.json();
+    if (!response.body) {
+      throw new Error(
+        "This browser does not support streaming responses."
+      );
+    }
 
-    const answer =
-      data.message?.content?.trim() ||
-      "No response generated.";
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
 
+    let buffer = "";
+    let answer = "";
+    let completed = false;
+
+    responseBubble.textContent = "Generating response…";
+
+    function consumeLine(line) {
+      if (!line.trim()) return;
+
+      const chunk = JSON.parse(line);
+
+      if (chunk.error) {
+        throw new Error(chunk.error);
+      }
+
+      if (chunk.message?.content) {
+        answer += chunk.message.content;
+        responseBubble.textContent = answer;
+
+        $("chatMessages").scrollTop =
+          $("chatMessages").scrollHeight;
+      }
+
+      if (chunk.done) {
+        completed = true;
+      }
+    }
+
+    while (true) {
+      const { done, value } = await reader.read();
+
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+
+      for (const line of lines) {
+        consumeLine(line);
+      }
+    }
+
+    buffer += decoder.decode();
+
+    if (buffer.trim()) {
+      consumeLine(buffer);
+    }
+
+    if (!completed) {
+      throw new Error("Ollama stream ended unexpectedly.");
+    }
+
+    answer = answer.trim() || "No response generated.";
     responseBubble.textContent = answer;
 
     chatHistory.push(
@@ -1194,9 +1095,7 @@ async function askAI(question) {
       }
     );
 
-    chatHistory =
-      chatHistory.slice(-MAX_CHAT_HISTORY);
-
+    chatHistory = chatHistory.slice(-MAX_CHAT_HISTORY);
   } catch (error) {
     responseBubble.textContent =
       `AI request failed: ${error.message}`;
@@ -1207,71 +1106,55 @@ async function askAI(question) {
   }
 }
 
-$("chatForm").addEventListener(
-  "submit",
-  async (event) => {
+// ===================================
+// CHAT EVENTS
+// ===================================
+
+$("chatForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const input = $("chatInput");
+  const question = input.value.trim();
+
+  if (!question) return;
+
+  input.value = "";
+  await askAI(question);
+});
+
+$("chatInput").addEventListener("keydown", (event) => {
+  if (event.key === "Enter" && !event.shiftKey) {
     event.preventDefault();
-
-    const input = $("chatInput");
-    const question = input.value.trim();
-
-    if (!question) return;
-
-    input.value = "";
-
-    await askAI(question);
+    $("chatForm").requestSubmit();
   }
-);
+});
 
-$("chatInput").addEventListener(
-  "keydown",
-  (event) => {
-    if (
-      event.key === "Enter" &&
-      !event.shiftKey
-    ) {
-      event.preventDefault();
+document.querySelectorAll("[data-prompt]").forEach((button) => {
+  button.addEventListener("click", () => {
+    askAI(button.dataset.prompt);
+  });
+});
 
-      $("chatForm").requestSubmit();
-    }
-  }
-);
+$("generateBtn").addEventListener("click", async () => {
+  navigate("copilot");
 
-document.querySelectorAll("[data-prompt]").forEach(
-  (button) => {
-    button.addEventListener("click", () => {
-      askAI(button.dataset.prompt);
-    });
-  }
-);
+  await askAI(
+    "Generate a professional investigation brief with these sections: " +
+      "Executive Finding, Key Contributors, Possible Explanations, " +
+      "Recommended Next Checks, and Confidence and Limitations. " +
+      "Use only the verified evidence."
+  );
+});
 
-$("generateBtn").addEventListener(
-  "click",
-  async () => {
-    navigate("copilot");
+$("clearChat").addEventListener("click", () => {
+  chatHistory = [];
+  $("chatMessages").replaceChildren();
+  $("chatMessages").appendChild(createChatWelcome());
+});
 
-    await askAI(
-      "Generate a professional investigation brief with these sections: Executive Finding, Key Contributors, Possible Explanations, Recommended Next Checks, and Confidence and Limitations. Use only the verified evidence."
-    );
-  }
-);
-
-$("clearChat").addEventListener(
-  "click",
-  () => {
-    chatHistory = [];
-
-    $("chatMessages").replaceChildren();
-
-    $("chatMessages").appendChild(
-      createChatWelcome()
-    );
-  }
-);
-
-/* -----------------------------------
-   INITIALIZATION
------------------------------------ */
+// ===================================
+// INITIALIZATION
+// ===================================
 
 updateStats();
 updateEvidencePanel();
